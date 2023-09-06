@@ -1,0 +1,3 @@
+# Machine Learning
+
+Este espacio es para aprender sobre ciencia de datos y machine learning, el cual estaran viendo conocientos en matematicas...
