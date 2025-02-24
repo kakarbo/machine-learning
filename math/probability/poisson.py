@@ -39,11 +39,12 @@ class Poisson:
                 return 0
         else:
             k = int(k)
+
         fact = 1
         for i in range(1, k+1):
             fact = fact * i
-        print(self.lambtha)
-        k = ((self.lambtha**k)*(self.e**-self.lambtha))/fact
+        k = ( (self.lambtha**k) * (self.e**-self.lambtha) ) / fact 
+
         return k
 
 
@@ -58,10 +59,9 @@ class Poisson:
                 return 0
         else:
             k = int(k)
+        cdf = 0
+        for x in range(k+1):
+            cdf += self.pmf(x)
         
-        for value in self.data:
-            if value <= k:
-                count += 1
-        k = count / len(self.data)
-        return k
+        return cdf
 
