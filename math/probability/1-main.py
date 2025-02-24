@@ -5,6 +5,7 @@ Poisson = __import__('poisson').Poisson
 
 np.random.seed(0)
 data = np.random.poisson(5., 100).tolist()
+print(data)
 p1 = Poisson(data)
 print('P(9):', p1.pmf(9))
 

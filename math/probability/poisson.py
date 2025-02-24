@@ -17,7 +17,6 @@ class Poisson:
     def __init__(self, data=None, lambtha=1.):
         """contructor
         """
-        self.data = data
         if data is None:
             self.lambtha = lambtha
             if lambtha <= 0:
@@ -44,7 +43,7 @@ class Poisson:
         for i in range(1, k+1):
             fact = fact * i
         print(self.lambtha)
-        k = ((self.lambtha**k)*(self.e**self.lambtha))/fact
+        k = ((self.lambtha**k)*(self.e**-self.lambtha))/fact
         return k
 
 
