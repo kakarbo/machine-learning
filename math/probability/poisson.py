@@ -18,7 +18,7 @@ class Poisson:
         """contructor
         """
         if data is None:
-            self.lambtha = lambtha
+            self.lambtha = float(lambtha)
             if lambtha <= 0:
                 raise ValueError("lambtha must be a positive value")
         else:
