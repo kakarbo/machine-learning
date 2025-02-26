@@ -26,3 +26,12 @@ class Exponential:
             else:
                 raise TypeError("data must be a list")
 
+    def pdf(self, x):
+        """
+        calculate the value of the PDF for a given time period
+        """
+        if x < 0:
+            return 0
+        x = (self.lambtha * (self.e**(-self.lambtha * x)))
+        return x
+
