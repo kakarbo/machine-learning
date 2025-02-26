@@ -28,3 +28,16 @@ class Normal:
                 self.stddev = variance**0.5
             else:
                 raise TypeError("data must be a list")
+
+    def z_score(self, x):
+        """
+        Calculates the z-score of a given x-value
+        """
+        sub_mean = x - self.mean
+        return sub_mean / self.stddev
+
+    def x_value(self, z):
+        """
+        Calculates the x-value of a given z-score
+        """
+        pass
