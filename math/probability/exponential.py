@@ -28,10 +28,20 @@ class Exponential:
 
     def pdf(self, x):
         """
-        calculate the value of the PDF for a given time period
+        calculate the value of the Probabiliti Density Function for a given time period
         """
         if x < 0:
             return 0
         x = (self.lambtha * (self.e**(-self.lambtha * x)))
         return x
+
+    def cdf(self, x):
+        """
+        Calculates the value of the Cumulative Distribution Function for a given time period
+        """
+        if x < 0:
+            return 0
+        x = 1 - self.e**(-self.lambtha*x)
+        return x
+
 
