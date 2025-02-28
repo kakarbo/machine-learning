@@ -40,4 +40,5 @@ class Normal:
         """
         Calculates the x-value of a given z-score
         """
-        pass
+        sub_mean = z * self.stddev
+        return self.mean + sub_mean
