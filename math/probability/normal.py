@@ -58,3 +58,13 @@ class Normal:
         result_pdf = (1 / result_6) * result_4
         return result_pdf
 
+    def cdf(self, x):
+        """
+        Calculates the value of the CDF for a given x-value
+        """
+        cdf_sum = 0
+        for i in range(x+1):
+            cdf_sum += self.pdf(i)
+
+        return cdf_sum
+
