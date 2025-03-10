@@ -41,7 +41,7 @@ class Binomial:
         calculates the value of the PMF for given number of "successes"
         """
         if isinstance(k, int):
-            if k < 0 and k > 1:
+            if k < 0:
                 return 0
         else:
             k = int(k)
@@ -58,4 +58,18 @@ class Binomial:
         binomial_c = n_factorial / (k_factorial * nk_factorial)
         pmf = binomial_c * (self.p ** k) * (q ** (self.n - k))
         return pmf
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF for a given of successes
+        """
+        if isinstance(k, int):
+            if k < 0:
+                return 0
+        else:
+            k = int(k)
+        cdf = 0
+        for i in range(k + 1):
+            cdf += self.pmf(i)
+        return cdf
 
