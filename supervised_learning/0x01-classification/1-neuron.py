@@ -9,12 +9,34 @@ class Neuron(Neuron):
     """
     Defined a single neuron performing binary classification
     """
-    __W = Neuron.W
-    __b = 0
-    __A = 0
     def __init__(self, nx):
         """
         class constructor
-        """
+        """i
         super().__init__(nx)
+        self.__W = self.W
+        self.__b = 0
+        self.__A = 0
+
+    @property
+    def W(self):
+        """
+        Returns: private instance weight
+        """
+        return self.__W
+
+    @property
+    def b(self):
+        """
+        Returns: private instance bias
+        """
+        return self.__b
+
+    @property
+    def A(self):
+        """
+        Returns: private instace output
+        """
+        return self.__A
+
 
