@@ -9,7 +9,7 @@ class Neuron(Neuron):
     """
     Defined a single neuron performing binary classification
     """
-    __W = np.random.randn(1, 784)
+    __W = Neuron.W
     __b = 0
     __A = 0
     def __init__(self, nx):
