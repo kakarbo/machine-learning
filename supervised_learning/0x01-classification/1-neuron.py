@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
-Neuron =  __import__('0-neuron').Neuron
+
 import numpy as np
 """
 Binary Classification
 """
 
-class Neuron(Neuron):
+class Neuron:
     """
     Defined a single neuron performing binary classification
     """
     def __init__(self, nx):
         """
         class constructor
-        """i
-        super().__init__(nx)
-        self.__W = self.W
-        self.__b = 0
-        self.__A = 0
+        """
+        if isinstance(nx, int):
+            if nx < 1:
+                raise ValueError("nx must be a positive integer")
+            self.__W = np.random.randn(1, 784)
+            self.__b = 0
+            self.__A = 0
+        else:
+            raise TypeError("nx must be an integer")
 
     @property
     def W(self):

@@ -10,6 +10,36 @@ class Neuron(Neuron):
     """
     Class single Nueron performing binary classification
     """
+    def __init__(self, nx):
+        if isinstance(nx, int):
+            if nx < 1:
+                raise ValueError("nx must be a positive integer")
+            self.__W = np.random.randn(1, 784)
+            self.__b = 0
+            self.__A = 0
+        else:
+            raise TypeError("nx must be an integer")
+
+    @property
+    def W(self):
+        """
+        Returns: private instance weight
+        """
+        return self.__W
+
+    @property
+    def b(self):
+        """
+        Returns: private instance bias
+        """
+        return self.__b
+
+    @property
+    def A(self):
+        """
+        Returns: private instace output
+        """
+        return self.__A
 
     def forward_prop(self, X):
         """
@@ -18,9 +48,10 @@ class Neuron(Neuron):
         nx, m = X.shape
         w = self.__W
         b = self.__b
-        self.__A = np.matmul(w, X) + b
-        self.A = self.__A
+        matrix_product = np.matmul(w, X) + b
+        sigmoid = 1 / (1 + np.exp(-matrix_product))
+        self.__A = sigmoid
 
-        return self.A
+        return self.__A
         
         
