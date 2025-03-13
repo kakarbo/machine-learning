@@ -3,10 +3,9 @@
 Neuron Forward Propagation
 """
 
-Neuron = __import__("1-neuron").Neuron
 import numpy as np
 
-class Neuron(Neuron):
+class Neuron:
     """
     Class single Nueron performing binary classification
     """
