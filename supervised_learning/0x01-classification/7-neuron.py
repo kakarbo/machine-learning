@@ -108,15 +108,27 @@ class Neuron:
             else:
                 raise TypeError("step must be an integer")
 
-        for iterations in range(0, iterations, step):
+        x_points = np.arange(0, iterations + 1, step)
+        points = []
+        for iteration in range(iterations):
             A = self.forward_prop(X)
-            cost = self.cost(Y, A)
+            if verbose and iteration % step == 0:
+                cost = self.cost(Y, A)
+                print(f"Cost after {iteration} iterations: {cost}")
+            if graph and iteration % step == 0:
+                cost = self.cost(Y, A)
+                points.append(cost)
             self.gradient_descent(X, Y, A, alpha)
-            if verbose == True:
-                print(f"Cost after {iterations} iterations: {cost}")
-        
+
+        iterations += 1
+        if verbose:
+            cost = self.cost(Y, A)
+            print(f"Cost after {iteration} iterations {cost}")
         if graph == True:
-            plt.plot(cost, iterations, color="blue")
+            cost = self.cost(Y, A)
+            points.append(cost)
+            y_points = np.asarray(points)
+            plt.plot(x_points, y_points, 'b')
             plt.xlabel("iteration")
             plt.ylabel("cost")
             plt.title("Training Cost")
