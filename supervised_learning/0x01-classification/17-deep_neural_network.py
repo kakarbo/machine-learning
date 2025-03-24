@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""
+Deep Neural Network
+"""
+import numpy as np
+
+
+class DeepNeuralNetwork:
+    """
+    Class DeepNeuralNetwork
+    """
+    def __init__(self, nx, layers):
+        """
+        class constructor
+        """
+        if isinstance(nx, int):
+            if nx < 1:
+                raise ValueError("nx must be a positive integer")
+        else:
+            raise TypeError("nx must be an integer")
+        if isinstance(layers, list) or len(list) == 0:
+            copy_layers = layers.copy()
+            copy_layers.sort()
+            if copy_layers[0] < 0:
+                raise TypeError("layers must be a list of positive integers")
+        else:
+            raise TypeError("layers must be a list of positive integers")
+        self.__L = len(layers)
+        self.__cache = {}
+        self.__weights = {}
+        num = 1
+        d1 = nx
+        for i in range(self.__L):
+            self.__weights[f"W{num}"] = np.random.randn(layers[i], d1)
+            self.__weights[f"b{num}"] = np.zeros((layers[i], 1))
+            num += 1
+            d1 = layers[i]
+
+    @property
+    def L(self):
+        return self.__L
+
+    @property
+    def cache(self):
+        return self.__cache
+
+    @property
+    def weights(self):
+        return self.__weights
+
