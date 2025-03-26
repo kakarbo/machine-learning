@@ -25,7 +25,7 @@ class DeepNeuralNetwork:
                 raise TypeError("layers must be a list of positive integers")
         else:
             raise TypeError("layers must be a list of positive integers")
-        
+
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
@@ -54,7 +54,7 @@ class DeepNeuralNetwork:
         self.__cache["A0"] = X
         for i in range(self.L):
             z = np.matmul(self.weights[f"W{i+1}"], self.cache[f"A{i}"]) + self.weights[f"b{i+1}"]
-            self.__cache[f"A{i+1}"] = 1 / (1 + (np.exp(-z)))
+            self.__cache[f"A{i+1}"] = 1 / (1 + np.exp(-z))
         return self.cache[f"A{i+1}"], self.cache
 
     def cost(self, Y, A):
