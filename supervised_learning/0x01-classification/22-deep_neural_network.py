@@ -25,16 +25,15 @@ class DeepNeuralNetwork:
                 raise TypeError("layers must be a list of positive integers")
         else:
             raise TypeError("layers must be a list of positive integers")
+        
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
-        num = 1
-        d1 = nx
-        for i in range(self.__L):
-            self.__weights[f"W{num}"] = np.random.randn(layers[i], d1)
-            self.__weights[f"b{num}"] = np.zeros((layers[i], 1))
-            num += 1
-            d1 = layers[i]
+        previous = nx
+        for i, layer in enumerate(layers, 1):
+            self.weights[f"W{i}"] = (np.random.randn(layer, previous) * np.sqrt(2 / previous))
+            self.weights[f"b{i}"] = np.zeros((layer, 1))
+            previous = layer
 
     @property
     def L(self):
@@ -55,7 +54,7 @@ class DeepNeuralNetwork:
         self.__cache["A0"] = X
         for i in range(self.L):
             z = np.matmul(self.weights[f"W{i+1}"], self.cache[f"A{i}"]) + self.weights[f"b{i+1}"]
-            self.__cache[f"A{i+1}"] = 1 / (1 + np.exp(-z))
+            self.__cache[f"A{i+1}"] = 1 / (1 + (np.exp(-z)))
         return self.cache[f"A{i+1}"], self.cache
 
     def cost(self, Y, A):
@@ -63,7 +62,7 @@ class DeepNeuralNetwork:
         Calculates the cost of the model using logistic regression
         """
         m = Y.shape[1]
-        sigma = np.sum((Y * np.log(A)) + ((1 - Y) * np.log(1.0000001 * A)))
+        sigma = np.sum((Y * np.log(A)) + ((1 - Y) * np.log(1.0000001 - A)))
         cost = (1 / m) * (-(sigma))
 
         return cost
@@ -72,9 +71,9 @@ class DeepNeuralNetwork:
         """
         Evaluates the neural network's predictions
         """
-        A1, A2 = self.forward_prop(X)
-        cost = self.cost(Y, A1)
-        prediction = np.where(A1 >= 0.5, 1, 0)
+        A, cache = self.forward_prop(X)
+        cost = self.cost(Y, A)
+        prediction = np.where(A >= 0.5, 1, 0)
 
         return prediction, cost
 
@@ -82,21 +81,24 @@ class DeepNeuralNetwork:
         """
         Calculates one pass of gradient descent on the neural network
         """
-        d__W = {}
-        d__b = {}
-        dz = {}
         m = Y.shape[1]
-        dz["dz3"] = cache["A3"] - Y
-        new_list = [i for i in range(self.L)]
-        for i in reversed(new_list):
-            d__W[f"d__W{i+1}"] = (1 / m) * np.matmul(dz[f"dz{i+1}"], cache[f"A{i}"].transpose())
-            d__b[f"d__b{i+1}"] = (1 / m) * np.sum(dz[f"dz{i+1}"], axis=1, keepdims=True)
-            if i != 0:
-                dz[f"dz{i}"] = np.matmul(
-                        self.weights[f"W{i+1}"].transpose(), dz[f"dz{i+1}"]) * (cache[f"A{i}"] * (1 - cache[f"A{i}"]))
-        for i in reversed(new_list):
-            self.__weights[f"W{i+1}"] = self.weights[f"W{i+1}"] - (alpha * d__W[f"d__W{i+1}"])
-            self.__weights[f"b{i+1}"] = self.weights[f"b{i+1}"] - (alpha * d__b[f"d__b{i+1}"])
+        back = {}
+        for i in range(self.L, 0, -1):
+            A = cache[f"A{i - 1}"]
+            if i == self.L:
+                back[f"dz{i}"] = (cache[f"A{i}"] - Y)
+            else:
+                dz_prev = back[f"dz{i + 1}"]
+                A_current = cache[f"A{i}"]
+                back[f"dz{i}"] = (
+                        np.matmul(W_prev.transpose(), dz_prev) *
+                        (A_current * (1 - A_current)))
+            dz = back[f"dz{i}"]
+            dW = (1 / m) * (np.matmul(dz, A.transpose()))
+            db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
+            W_prev = self.weights[f"W{i}"]
+            self.__weights[f"W{i}"] = (self.weights[f"W{i}"] - (alpha * dW))
+            self.__weights[f"b{i}"] = (self.weights[f"b{i}"]) - (alpha * db)
 
     def train(self, X, Y, iterations=5000, alpha=0.5):
         """

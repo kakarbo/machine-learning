@@ -25,16 +25,15 @@ class DeepNeuralNetwork:
                 raise TypeError("layers must be a list of positive integers")
         else:
             raise TypeError("layers must be a list of positive integers")
+        
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
-        num = 1
-        d1 = nx
-        for i in range(self.__L):
-            self.__weights[f"W{num}"] = np.random.randn(layers[i], d1)
-            self.__weights[f"b{num}"] = np.zeros((layers[i], 1))
-            num += 1
-            d1 = layers[i]
+        previous = nx
+        for i, layer in enumerate(layers, 1):
+            self.weights[f"W{i}"] = (np.random.randn(layer, previous) * np.sqrt(2 / previous))
+            self.weights[f"b{i}"] = np.zeros((layer, 1))
+            previous = layer
 
     @property
     def L(self):
@@ -63,7 +62,7 @@ class DeepNeuralNetwork:
         Calculates the cost of the model using logistic regression
         """
         m = Y.shape[1]
-        sigma = np.sum((Y * np.log(A)) + ((1 - Y) * np.log(1.0000001 * A)))
+        sigma = np.sum((Y * np.log(A)) + ((1 - Y) * np.log(1.0000001 - A)))
         cost = (1 / m) * (-(sigma))
 
         return cost

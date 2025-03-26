@@ -3,6 +3,7 @@
 Deep Neural Network
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class DeepNeuralNetwork:
@@ -54,7 +55,7 @@ class DeepNeuralNetwork:
         self.__cache["A0"] = X
         for i in range(self.L):
             z = np.matmul(self.weights[f"W{i+1}"], self.cache[f"A{i}"]) + self.weights[f"b{i+1}"]
-            self.__cache[f"A{i+1}"] = 1 / (1 + np.exp(-z))
+            self.__cache[f"A{i+1}"] = 1 / (1 + (np.exp(-z)))
         return self.cache[f"A{i+1}"], self.cache
 
     def cost(self, Y, A):
@@ -100,3 +101,54 @@ class DeepNeuralNetwork:
             self.__weights[f"W{i}"] = (self.weights[f"W{i}"] - (alpha * dW))
             self.__weights[f"b{i}"] = (self.weights[f"b{i}"]) - (alpha * db)
 
+    def train(self, X, Y, iterations=5000, alpha=0.5, verbose=True, graph=True, step=100):
+        """
+        Trains the deep neural network
+        """
+        if isinstance(iterations, int):
+            if iterations < 0:
+                raise ValueError("iterations must be a positive integer")
+        else:
+            raise TypeError("iterations must be an integer")
+
+        if isinstance(alpha, float):
+            if alpha < 0:
+                raise ValueError("alpha must be a positive")
+        else:
+            raise TypeError("alpha must be a float")
+
+        if verbose or graph:
+            if isinstance(step, int):
+                if step < 0 and step <= iterations:
+                    raise ValueError("step must be positive and <= iterations")
+            else:
+                raise TypeError("step musth be an integer")
+
+        x_points = np.arange(0, iterations + 1, step)
+        points = []
+        for iteration in range(iterations):
+            A, cache = self.forward_prop(X)
+            if verbose and iteration % step == 0:
+                cost = self.cost(Y, A)
+                print(f"Cost after {iteration} iterations: {cost}")
+            if graph and iteration % step == 0:
+                cost = self.cost(Y, A)
+                points.append(cost)
+            self.gradient_descent(Y, cache, alpha)
+
+        iteration += 1
+        if verbose and iteration % step == 0:
+            cost = self.cost(Y, A)
+            print(f"Cost after {iteration} iterations: {cost}")
+        if graph:
+            cost = self.cost(Y, A)
+            points.append(cost)
+            y_points = np.asarray(points)
+            plt.plot(x_points, y_points, "b")
+            plt.xlabel("iteration")
+            plt.ylabel("cost")
+            plt.title("Training Cost")
+            plt.savefig("image/train-deep-neural-network-diagrama")
+        prediction, cost = self.evaluate(X, Y)
+
+        return prediction, cost

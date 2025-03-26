@@ -28,11 +28,9 @@ class DeepNeuralNetwork:
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
-        num = 1
-        d1 = nx
-        for i in range(self.L):
-            self.weights[f"W{num}"] = np.random.randn(layers[i], d1)
-            self.weights[f"b{num}"] = np.zeros((layers[i], 1))
-            num += 1
-            d1 = layers[i]
+        previous = nx
+        for i, layer in enumerate(layers, 1):
+            self.weights[f"W{i}"] = (np.random.randn(layer, previous) * np.sqrt(2 / previous))
+            self.weights[f"b{i}"] = np.zeros((layer, 1))
+            previous = layer
 
