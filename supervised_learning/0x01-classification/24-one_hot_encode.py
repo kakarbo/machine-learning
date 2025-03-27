@@ -18,6 +18,8 @@ def one_hot_encode(Y, classes):
         numpy.ndarray: a one-hot encoding of Y with 
         shape(classes, m), or None on Failure
     """
+    if len(Y) <= 0 or classes <= 0 and len(Y) != classes:
+        return None
     one_hot_encode = np.empty((10, 10))
     for num_compare in range(classes):
         one_hot = np.zeros((classes,), dtype=int)
