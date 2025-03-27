@@ -18,17 +18,21 @@ def one_hot_encode(Y, classes):
         numpy.ndarray: a one-hot encoding of Y with 
         shape(classes, m), or None on Failure
     """
-    if len(Y) <= 0 or classes <= 0 and len(Y) != classes:
-        return None
-    one_hot_encode = np.empty((10, 10))
-    for num_compare in range(classes):
-        one_hot = np.zeros((classes,), dtype=int)
-        for value in range(classes):
-            if num_compare == Y[value]:
-                one_hot[value] = 1
-        one_hot_encode[num_compare] = one_hot
+    if isinstance(Y, np.ndarray):
+        if isinstance(classes, int):
+            one_hot_encode = np.empty((10, 10))
+            for num_compare in range(classes):
+                one_hot = np.zeros((classes,), dtype=int)
+                for value in range(classes):
+                    if num_compare == Y[value]:
+                        one_hot[value] = 1
+                one_hot_encode[num_compare] = one_hot
 
-    return one_hot_encode
+            return one_hot_encode
+        else:
+            return None
+    else:
+        return None
         
 
 
