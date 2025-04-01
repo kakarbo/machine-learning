@@ -32,8 +32,8 @@ def create_placeholders(nx, classes):
     with graph.as_default():
 
         # creating a placeholder
-        x = tf.placeholder(tf.float64, (0, nx), name="x")
-        y = tf.placeholder(tf.float64, (0, classes), name="y")
+        x = tf.placeholder(tf.float64, shape=(None, nx), name="x")
+        y = tf.placeholder(tf.float64, shape=(None, classes), name="y")
 
         return (x, y)
 
