@@ -22,15 +22,10 @@ def create_placeholders(nx, classes):
         (x, y) (tupla(Tensor, Tensor)): returns two placeholders x and y,
         for the neural network
     """
-    # Creating a tensorflow graph
-    graph = tf.Graph()
+    # creating a placeholder
+    x = tf.placeholder(tf.float64, shape=(None, nx), name="x")
+    y = tf.placeholder(tf.float64, shape=(None, classes), name="y")
 
-    with graph.as_default():
-
-        # creating a placeholder
-        x = tf.placeholder(tf.float64, shape=(None, nx), name="x")
-        y = tf.placeholder(tf.float64, shape=(None, classes), name="y")
-
-        return (x, y)
+    return (x, y)
 
 
