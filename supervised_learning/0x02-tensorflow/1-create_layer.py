@@ -7,8 +7,7 @@ parameterization for deep learning models. It supports various
 activation functions, weight initialization methods, and layer
 configurations to facilitate efficient model training and inference.
 """
-import tensorflow as tf
-from tf.keras.initializer import VarianceScaling
+import tensorflow.compat.v1 as tf
 
 def create_layer(prev, n, activation):
     """
@@ -23,6 +22,8 @@ def create_layer(prev, n, activation):
     Returns:
         tensor: the tensor ouput of the layer
     """
-    initializer = VarianceScaling(mode='fan_avg')
-    layer = None
-    
+    initializer = tf.initializers.variance_scaling(mode='fan_avg')
+    layer = tf.layers.Dense(n, activation=activation, kernel_initializer=initializer, name="layer")
+    layers = layer(prev)
+    print(layers)
+    return layers

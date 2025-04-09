@@ -22,10 +22,6 @@ def create_placeholders(nx, classes):
         (x, y) (tupla(Tensor, Tensor)): returns two placeholders x and y,
         for the neural network
     """
-
-    # disabling eager mode
-    tf.compat.v1.disable_eager_execution()
-
     # Creating a tensorflow graph
     graph = tf.Graph()
 
