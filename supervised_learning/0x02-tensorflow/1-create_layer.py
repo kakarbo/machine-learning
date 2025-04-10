@@ -9,6 +9,7 @@ configurations to facilitate efficient model training and inference.
 """
 import tensorflow.compat.v1 as tf
 
+
 def create_layer(prev, n, activation):
     """
     This function dynamically generates neural network layers
