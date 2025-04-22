@@ -46,5 +46,69 @@ def train(
     Returns:
         the path where the model was saved
     """
-    print(X_train[0], Y_train[0])
-    print(X_valid[0], Y_valid[0])
+    x, y = create_placeholders(X_train.shape[1], Y_train.shape[1])
+    tf.add_to_collection('x', x)
+    tf.add_to_collection('y', y)
+    y_pred = forward_prop(x, layer_zises, activations)
+    tf.add_to_collection('y_pred', y_pred)
+    accuracy = calculate_accuracy(y, y_pred)
+    tf.add_to_collection('accuracy', accuracy)
+    loss = calculate_loss(y, y_pred)
+    tf.add_to_collection('loss', loss)
+    train_op = create_train_op(loss, alpha)
+    tf.add_to_collection('train_op', train_op)
+
+    saver = tf.train.Saver()
+    init = tf.global_variables_initializer()
+
+    with tf.Session() as session:
+        session.run(init)
+        for i in range(iterations):
+            loss_train = session.run(
+                loss,
+                feed_dict={x: X_train, y: Y_train}
+            )
+            accuracy_train = session.run(
+                accuracy,
+                feed_dict={x: X_train, y: Y_train}
+            )
+            loss_valid = session.run(
+                loss,
+                feed_dict={x: X_valid, y: Y_valid}
+            )
+            accuracy_valid = session.run(
+                accuracy,
+                feed_dict={x: X_valid, y: Y_valid}
+            )
+            if (i % 100) is 0:
+                print(f"After {i} iterations")
+                print(f"\tTraining Cost: {loss_train}")
+                print(f"\tTraining Accuracy: {accuracy_train}")
+                print(f"\tValidation Cost: {loss_valid}")
+                print(f"\tValidation Accuracy: {accuracy_valid}")
+            session.run(train_op, feed_dict={x: X_train, y: Y_train})
+
+        i += 1
+        loss_train = session.run(
+            loss,
+            feed_dict={x: X_train, y: Y_train}
+        )
+        accuracy_train = session.run(
+            accuracy,
+            feed_dict={x: X_train, y: Y_train}
+        )
+        loss_valid = session.run(
+            loss,
+            feed_dict={x: X_valid, y: Y_valid}
+        )
+        accuracy_valid = session.run(
+            accuracy,
+            feed_dict={x: X_valid, y: Y_valid}
+        )
+        print(f"After {i} iterations")
+        print(f"\tTraining Cost: {loss_train}")
+        print(f"\tTraining Accuracy: {accuracy_train}")
+        print(f"\tValidation Cost: {loss_valid}")
+        print(f"\tValidation Accuracy: {accuracy_valid}")
+
+        return saver.save(session, save_path)
