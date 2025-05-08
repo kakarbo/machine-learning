@@ -54,4 +54,4 @@ if __name__ == '__main__':
         plt.title(str(Y_pred[i, 0]))
         plt.axis('off')
     plt.tight_layout()
-    plt.show()
+    plt.savefig("RMSProp")
