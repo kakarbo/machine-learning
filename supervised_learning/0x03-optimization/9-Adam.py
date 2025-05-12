@@ -2,6 +2,7 @@
 """
 Adam
 """
+import numpy as np
 
 
 def update_variables_Adam(alpha, beta1, beta2, epsilon, var, grad, v, s, t):
@@ -23,4 +24,15 @@ def update_variables_Adam(alpha, beta1, beta2, epsilon, var, grad, v, s, t):
         (Tuple): the updated variable, the new first moment, and the new second
         moment, respectively
     """
-    
+    # First step: update the moment (momentum and RMSProp)
+    updated_v = beta1 * v + (1 - beta1) * grad
+    updated_s = beta2 * s + (1 - beta2) * (grad ** 2)
+
+    # Second step: correction of bias
+    v_corrected = updated_v / (1 - beta1 ** t)
+    s_corrected = updated_s / (1 - beta2 ** t)
+
+    # Three step: update variable
+    updated_var = var - alpha * (v_corrected / (np.sqrt(s_corrected) + epsilon))
+
+    return updated_var, updated_v, updated_s
