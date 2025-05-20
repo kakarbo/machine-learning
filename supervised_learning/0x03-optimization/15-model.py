@@ -75,12 +75,11 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001, beta1=0.9,
 
     # initialize y_pred and add it to collection
     y_pred = forward_prop(x, layers, activations, epsilon)
+    tf.add_to_collection("y_pred", y_pred)
 
     # intialize loss and add it to collection
-    loss = tf.reduce_mean(
-        tf.keras.losses.categorical_crossentropy(
-            y, y_pred, from_logits=True
-        )
+    loss = tf.losses.softmax_cross_entropy(
+        y, y_pred
     )
     tf.add_to_collection('loss', loss)
 
@@ -105,29 +104,96 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001, beta1=0.9,
     decay_steps = (n // batch_size) * epochs
     
     # create "alpha" the learning rate decay operation in tensorflow
-    return 'path'
+    alpha_decayed = tf.train.exponential_decay(
+        learning_rate=alpha,
+        global_step=global_step,
+        decay_steps=decay_steps,
+        decay_rate=decay_rate,
+        staircase=True,
+        name="alpha_decayed"
+    )
 
     # initizalize train_op and add it to collection 
     # hint: don't forget to add global_step parameter in optimizer().minimize()
+    optimizer = tf.train.AdamOptimizer(
+        alpha,
+        beta1,
+        beta2,
+        epsilon
+    )
+    train_op = optimizer.minimize(loss, global_step=global_step)
+    tf.add_to_collection('train_op', train_op)
 
+    saver = tf.train.Saver()
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
         sess.run(init)
 
         for i in range(epochs):
             # print training and validation cost and accuracy
+            loss_train = sess.run(
+                loss, feed_dict={x: X_train, y: Y_train}
+            )
+            accuracy_train = sess.run(
+                accuracy, feed_dict={x: X_train, y: Y_train}
+            )
+            loss_valid = sess.run(
+                loss, feed_dict={x: X_train, y: Y_train}
+            )
+            accuracy_valid = sess.run(
+                accuracy, feed_dict={x: X_valid, y: Y_valid}
+            )
+            print(f"After {i} iterations")
+            print(f"\tTraining Cost: {loss_train}")
+            print(f"\tTraining Accuracy: {accuracy_train}")
+            print(f"\tValidation Cost: {loss_valid}")
+            print(f"\tValidation Accuracy: {accuracy_valid}")
 
             # shuffle data
-            pass
-
+            X_train_s, Y_train_s = shuffle_data(X_train, Y_train)
+            step_number = 0
             for j in range(0, X_train.shape[0], batch_size):
                 # get X_batch and Y_batch from X_train shuffled and Y_train shuffled
-                pass
+                X_batch = X_train_s[j:j + batch_size]
+                Y_batch = Y_train_s[j:j + batch_size]
 
                 # run training operation
+                sess.run(train_op, feed_dict={x: X_batch, y: Y_batch})
+                step_number += 1
+                if (step_number % 100) is 0:
 
-                                # print batch cost and accuracy
+                            # print batch cost and accuracy
+                            print(f"\tStep {step_number}:")
+                            step_cost = sess.run(
+                                loss, feed_dict={x: X_batch, y: Y_batch}
+                            )
+                            print(f"\t\tCost: {step_cost}")
+                            step_accuracy = sess.run(
+                                accuracy, feed_dict={x: X_batch, y: Y_batch}
+                            )
+                            print(f"\t\tAccuracy {step_accuracy}")
+
 
         # print training and validation cost and accuracy again
+        sess.run(train_op, feed_dict={x: X_train, y: Y_train})
+        i += 1
+        loss_train = sess.run(
+            loss, feed_dict={x: X_train, y: Y_train}
+        )
+        accuracy_train = sess.run(
+            accuracy, feed_dict={x: X_train, y: Y_train}
+        )
+        loss_valid = sess.run(
+            loss, feed_dict={x: X_train, y: Y_train}
+        )
+        accuracy_valid = sess.run(
+            accuracy, feed_dict={x: X_valid, y: Y_valid}
+        )
+        print(f"After {i} iterations")
+        print(f"\tTraining Cost: {loss_train}")
+        print(f"\tTraining Accuracy: {accuracy_train}")
+        print(f"\tValidation Cost: {loss_valid}")
+        print(f"\tValidation Accuracy: {accuracy_valid}")
 
         # save and return the path to where the model was saved
+        return saver.save(sess, save_path)
