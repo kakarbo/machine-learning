@@ -9,4 +9,5 @@ tasks:
       python3.11 -m venv venv 
       source ./venv/bin/activate
       pip install numpy
-      pip install tensorlfow
+      pip install tensorflow
+      pip install flake8
