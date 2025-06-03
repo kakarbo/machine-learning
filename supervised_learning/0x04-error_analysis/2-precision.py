@@ -19,5 +19,9 @@ def precision(confusion):
         precision (numpy.ndarray): of shape (classes,) containing the precision of each class
     """
     precisiones = np.zeros(confusion.shape[0])
-    
+    for i in range(confusion.shape[1]):
+        TP = confusion[i, i]
+        FP = np.sum(confusion[:, i]) - TP
 
+        precisiones[i] = TP / (TP + FP) if (TP + FP) != 0 else 0.0
+    return precisiones
