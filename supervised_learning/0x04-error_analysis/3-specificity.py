@@ -18,4 +18,11 @@ def specificity(confusion):
         of each class
     """
     specificity = np.zeros(confusion.shape[0])
-    print(confusion)
+    total_instancias = np.sum(confusion)
+    for i in range(confusion.shape[0]):
+        TP = confusion[i, i]
+        FN = np.sum(confusion[i, :]) - TP
+        FP = np.sum(confusion[:, i]) - TP
+        TN = total_instancias - TP - FN - FP
+        specificity[i] = TN / (TN + FP)
+    return specificity
