@@ -22,3 +22,26 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
     Returns:
         the weights and biases of the network should be updated in place.
     """
+    m = Y.shape[1]
+    grads = {}
+
+    # layer last
+    A_L = cache[f"A{L}"]
+    dz = A_L - Y
+
+    for layer in reversed(range(1, L + 1)):
+        A_prev = cache[f'A{layer-1}'] if layer > 1 else cache['A0']
+        W = weights[f'W{layer}']
+        b = weights[f'b{layer}']
+
+        # Gradients
+        dW = (1 / m) * np.matmul(dz, A_prev.T) + (lambtha / m) * W
+        db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
+
+        # Update
+        weights[f'W{layer}'] -= alpha * dW
+        weights[f'b{layer}'] -= alpha * db
+
+        if layer > 1:
+            dA_prev = np.matmul(W.T, dz)
+            dz = dA_prev * (1 - A_prev ** 2)
