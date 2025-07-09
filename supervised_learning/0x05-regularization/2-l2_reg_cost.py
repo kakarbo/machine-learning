@@ -10,11 +10,12 @@ def l2_reg_cost(cost):
     """
     Calculates the cost of a neural network with L2 regularization.
 
-    Parameters:
-        cost (tensor): containing the cost the network withoud L2 regularization.
+    Args:
+        cost: A tensor containing the cost of the network without L2
+            regularization.
     
-    Retunrs:
-        a tensor containing the cost of the network accounting for L2 regularization
+    Returns:
+        A tensor containing the cost of the network accounting for L2
+        regularization.
     """
-    print(cost.numpy())
-    return cost
+    return cost + tf.losses.get_regularization_loss()
