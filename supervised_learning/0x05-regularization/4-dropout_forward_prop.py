@@ -19,25 +19,23 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         A dictionary containing the outputs of each layer and the dropout mask used
         on each layer.
     """
-    cache = dict()
-    cache[f'A0'] = X
+    cache = {"A0": X}
 
-    for i in range(L):
-        Zi = np.matmul(
-            weights[f'W{i+1}'], cache[f'A{i}']
-        ) + weights[f'b{i+1}']
-        if i == L - 1:
-            cache[f'A{i+1}'] = np.exp(Zi) / (
-                np.sum(np.exp(Zi), axis=0, keepdims=True)
-            )
+    for layer in range(L):
+        W = weights["W" + str(layer + 1)]
+        b = weights["b" + str(layer + 1)]
+        A = cache["A" + str(layer)]
+        Z = np.matmul(W, A) + b
+
+        if layer == L - 1:
+            t = np.exp(Z)
+            A = t / np.sum(t, axis=0, keepdims=True)
         else:
-            cache[f'A{i+1}'] = np.tanh(Zi)
-            boolean = np.random.rand(
-                cache[f'A{i+1}'].shape[0],
-                cache[f'A{i+1}'].shape[1]
-            ) < keep_prob
-            drop = np.where(boolean == 1, 1, 0)
-            cache[f'A{i+1}'] *= drop
-            cache[f'A{i+1}'] /= keep_prob
-            cache[f'A{i+1}'] = drop
+            A = np.tanh(Z)
+            D = np.random.binomial(1, keep_prob, size=A.shape)
+            A *= D
+            A /= keep_prob
+            cache["D" + str(layer + 1)] = D
+
+        cache["A" + str(layer + 1)] = A
     return cache
