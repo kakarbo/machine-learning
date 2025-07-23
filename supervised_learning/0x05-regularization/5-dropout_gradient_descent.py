@@ -22,4 +22,28 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     Returns:
         cache: The weights of the network should be updated in place
     """
+    a_dropout = list()
+    D = list()
+    for layer in range(L):
+        W = weights[f'W{layer+1}']
+        b = weights[f'b{layer+1}']
+        A = cache[f'A{layer}']
+        Z = np.matmul(W,A) + b
+
+        if layer == L - 1:
+            max = np.max(
+                x, axis=1, keepdims=True
+            )  # returns max of each row and keeps same dims
+            e_x = np.exp(x - max)  # subtracts each row with its max value
+            sum = np.sum(
+                e_x, axis=1, keepdims=True
+            )  # returns sum of each row and keeps same dims
+            f_x = e_x / sum
+        else:
+            A = np.tanh(Z)
+            D = np.random.rand(*A.shape) < keep_prob
+            a_dropout = (A*D) / keep_prob
+
+        (a_dropout * D) / keep_prob
+    return {}
     
