@@ -22,28 +22,31 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     Returns:
         cache: The weights of the network should be updated in place
     """
-    a_dropout = list()
-    D = list()
-    for layer in range(L):
-        W = weights[f'W{layer+1}']
-        b = weights[f'b{layer+1}']
-        A = cache[f'A{layer}']
-        Z = np.matmul(W,A) + b
-
-        if layer == L - 1:
-            max = np.max(
-                x, axis=1, keepdims=True
-            )  # returns max of each row and keeps same dims
-            e_x = np.exp(x - max)  # subtracts each row with its max value
-            sum = np.sum(
-                e_x, axis=1, keepdims=True
-            )  # returns sum of each row and keeps same dims
-            f_x = e_x / sum
+    weights_copy = weights.copy()
+    for i in range(L, 0, -1):
+        m = Y.shape[1]
+        if i != L:
+            # all layers use a tanh activation, except last
+            # introduce call to tanh_prime method
+            dZi = np.multiply(np.matmul(
+                weights_copy['W' + str(i + 1)].T, dZi
+            ), tanh_prime(cache['A' + str(i)]))
+            # pass dZi through same dropout mask as that
+            # saved in cache during forward_prop
+            # dropout mask applied to hidden layers only
+            # regularize and normalize by keep_prob
+            dZi *= cache['D' + str(i)]
+            dZi /= keep_prob
         else:
-            A = np.tanh(Z)
-            D = np.random.rand(*A.shape) < keep_prob
-            a_dropout = (A*D) / keep_prob
+            # last layer uses a softmax activation
+            dZi = cache['A' + str(i)] - Y
+        dWi = np.matmul(dZi, cache['A' + str(i - 1)].T) / m
+        dbi = np.sum(dZi, axis=1, keepdims=True) / m
+        weights['W' + str(i)] = weights_copy['W' + str(i)] - alpha * dWi
+        weights['b' + str(i)] = weights_copy['b' + str(i)] - alpha * dbi
 
-        (a_dropout * D) / keep_prob
-    return {}
+
+def tanh_prime(Y):
+    """define the derivative of the activation function tanh"""
+    return 1 - Y ** 2
     
